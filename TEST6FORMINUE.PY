@@ -28,7 +28,7 @@ GREY = [128, 128, 128]
 TURQUOISE = [64, 224, 208]
 
 class Spot:
-    def __init__(self, row, col, width, total_rows, color):
+    def _init_(self, row, col, width, total_rows, color):
         self.row = row
         self.col = col
         self.x = row * width
@@ -102,7 +102,7 @@ class Spot:
         if self.col > 0 and not grid[self.row * ROWS + (self.col - 1)].is_barrier():
             self.neighbors.append(grid[self.row * ROWS + (self.col - 1)])
 
-    def __lt__(self, other):
+    def _lt_(self, other):
         return False
 
 
@@ -219,10 +219,7 @@ def load_maze(file_name):
 def main(win, width):
     player1 = 0
     player2 = 0
-    with open('player1_path.json', 'w') as file:
-        pass 
-    with open('player2_path.json', 'w') as file:
-        pass
+    shortest_path = 0
     maze_id = random.randint(1, 3)
     maze_data = load_maze(f"maze{maze_id}.json")
     grid = make_grid(ROWS, width, maze_data)
@@ -341,8 +338,6 @@ def main(win, width):
                         display_popup_message("Invalid Moves!")        
                         
         if game_over:
-            
-
             start = None
             end = None
             for spot in grid:
@@ -355,26 +350,22 @@ def main(win, width):
                     row.update_neighbors(grid)
                 algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
         
-    if(game_over):                        
-        player1_path_data= load_maze("player1_path.json")
-        player2_path_data = load_maze("player2_path.json")
-    else:
-        player1_path_data = []
-        player2_path_data = []
+                            
+    player1_path_data= load_maze("player1_path.json")
+    player2_path_data = load_maze("player2_path.json")
     if player1_path_data:
             for row in player1_path_data:
                 if (grid[row[0]*ROWS+row[1]]).color==PURPLE:
-                        player1 += 1 
+                        player1 += 1
                     
                     
     if player2_path_data:
             for row in player2_path_data:
                 if (grid[row[0]*ROWS+row[1]]).color==PURPLE:
                             player2 += 1
-    
+  
     pl1=player1-len(player1_path_data)
     pl2=player2-len(player2_path_data)
-    
 
     win.fill(WHITE)
     if pl1 > pl2:
@@ -384,7 +375,6 @@ def main(win, width):
     else:
         display_popup_message("It's a tie!")
 
-    
     pygame.quit()
  
 if __name__ == "__main__":
