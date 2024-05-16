@@ -28,7 +28,7 @@ GREY = [128, 128, 128]
 TURQUOISE = [64, 224, 208]
 
 class Spot:
-    def __init__(self, row, col, width, total_rows, color):
+    def _init_(self, row, col, width, total_rows, color):
         self.row = row
         self.col = col
         self.x = row * width
@@ -102,7 +102,7 @@ class Spot:
         if self.col > 0 and not grid[self.row * ROWS + (self.col - 1)].is_barrier():
             self.neighbors.append(grid[self.row * ROWS + (self.col - 1)])
 
-    def __lt__(self, other):
+    def _lt_(self, other):
         return False
 
 
@@ -255,33 +255,39 @@ def main(win, width):
                             if new_spot.color != BLACK:
                                 current_spot = new_spot
                                 if player_turn == 1:
-                                    current_spot.make_player1()
-                                    player1_path.append(current_spot.get_pos())
+                                        if current_spot.color != BLUE:
+                                            current_spot.make_player1()
+                                            player1_path.append(current_spot.get_pos())
                                 else:
-                                    current_spot.make_player2()
-                                    player2_path.append(current_spot.get_pos())
+                                    if current_spot.color != YELLOW:
+                                        current_spot.make_player2()
+                                        player2_path.append(current_spot.get_pos())
                     elif event.key == pygame.K_RIGHT:
                         if current_spot.row < ROWS - 1:
                             new_spot = grid[(current_spot.row + 1) * ROWS + current_spot.col]
                             if new_spot.color != BLACK:
                                 current_spot = new_spot
                                 if player_turn == 1:
-                                    current_spot.make_player1()
-                                    player1_path.append(current_spot.get_pos())
+                                        if current_spot.color != BLUE:
+                                            current_spot.make_player1()
+                                            player1_path.append(current_spot.get_pos())
                                 else:
-                                    current_spot.make_player2()
-                                    player2_path.append(current_spot.get_pos())
+                                    if current_spot.color != YELLOW:
+                                        current_spot.make_player2()
+                                        player2_path.append(current_spot.get_pos())
                     elif event.key == pygame.K_UP:
                         if current_spot.col > 0:
                             new_spot = grid[current_spot.row * ROWS + (current_spot.col - 1)]
                             if new_spot.color != BLACK:
                                 current_spot = new_spot
                                 if player_turn == 1:
-                                    current_spot.make_player1()
-                                    player1_path.append(current_spot.get_pos())
+                                        if current_spot.color != BLUE:
+                                            current_spot.make_player1()
+                                            player1_path.append(current_spot.get_pos())
                                 else:
-                                    current_spot.make_player2()
-                                    player2_path.append(current_spot.get_pos())
+                                    if current_spot.color != YELLOW:
+                                        current_spot.make_player2()
+                                        player2_path.append(current_spot.get_pos())
                     elif event.key == pygame.K_DOWN:
                         if current_spot.col < ROWS - 1:
                             new_spot = grid[current_spot.row * ROWS + (current_spot.col + 1)]
@@ -297,10 +303,11 @@ def main(win, width):
                                         player2_path.append(current_spot.get_pos())
                     elif event.key == pygame.K_x: 
                         current_spot.reset()
+                        item_to_remove = current_spot.get_pos()
                         if player_turn == 1:
-                            player1_path.remove(current_spot.get_pos())
+                            player1_path.remove(item_to_remove)
                         else:
-                            player2_path.remove(current_spot.get_pos())
+                            player2_path.remove(item_to_remove)
 
                   
               
@@ -308,7 +315,7 @@ def main(win, width):
                 if event.key == pygame.K_RETURN:
                     if current_spot.x == end_spot.x and current_spot.y == end_spot.y:    
                         if player_turn == 1:
-                            save_path(list(set(player1_path)), "player1_path.json")
+                            save_path((player1_path), "player1_path.json")
                             display_popup_message("Player 2, it's your turn!")
                             player_turn = 2
                             current_spot = start_spot 
@@ -331,10 +338,6 @@ def main(win, width):
                         display_popup_message("Invalid Moves!")        
                         
         if game_over:
-            player1_path_data= load_maze("player1_path.json")
-            player2_path_data = load_maze("player2_path.json")
-            
-
             start = None
             end = None
             for spot in grid:
@@ -347,19 +350,20 @@ def main(win, width):
                     row.update_neighbors(grid)
                 algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
         
-            if player1_path_data:
-                    for row in player1_path_data:
-                        if (grid[row[0]*ROWS+row[1]]).color==PURPLE:
-                             player1 += 1
                             
-                            
-            if player2_path_data:
-                    for row in player2_path_data:
-                        if (grid[row[0]*ROWS+row[1]]).color==PURPLE:
-                                    player2 += 1
-                            
-    print(player1)
-    print(player2)
+    player1_path_data= load_maze("player1_path.json")
+    player2_path_data = load_maze("player2_path.json")
+    if player1_path_data:
+            for row in player1_path_data:
+                if (grid[row[0]*ROWS+row[1]]).color==PURPLE:
+                        player1 += 1
+                    
+                    
+    if player2_path_data:
+            for row in player2_path_data:
+                if (grid[row[0]*ROWS+row[1]]).color==PURPLE:
+                            player2 += 1
+  
     pl1=player1-len(player1_path_data)
     pl2=player2-len(player2_path_data)
 
